@@ -1,0 +1,10 @@
+certifi==2022.9.24
+charset-normalizer==2.1.1
+idna==3.4
+peewee==3.15.4
+pyrate-limiter==2.8.3
+ratelimit==2.2.1
+requests==2.28.1
+requests-ratelimiter==0.4.0
+tqdm==4.64.1
+urllib3==1.26.12
