@@ -1,25 +1,22 @@
+import json
 import os
-import requests
+from urllib.parse import urlparse
+
+from pyrate_limiter import Duration, Limiter, RequestRate
 from requests.adapters import HTTPAdapter
 from requests.cookies import RequestsCookieJar
-from urllib.parse import urlparse
-from pprint import pprint
-import json
+from requests_ratelimiter import LimiterSession
 from tqdm import tqdm
-from ratelimit import limits, sleep_and_retry
-from requests_ratelimiter import LimiterSession, LimiterAdapter
 
 COOKIE_NAME = "_t"
 COOKIE_VALUE = "bc203e0521fcd8d928b9ba67ee72ee2e"
 BASE_URL = "https://www.chiefdelphi.com"
 PATH = os.path.join(os.getcwd(), "data")
 
-BASE_SCHEME = urlparse(BASE_URL).scheme
-MAX_MORE_TOPICS = 99
 TOPIC_PATH = "/latest.json?no_definitions=true&page="
 BASE_TOPIC_URL = BASE_URL + TOPIC_PATH
 
-session = LimiterSession(per_second=5)
+session = LimiterSession(limiter=Limiter(RequestRate(200, Duration.MINUTE)))
 session.mount(BASE_URL, HTTPAdapter(max_retries=5))
 cookie_jar = RequestsCookieJar()
 cookie_jar.set(COOKIE_NAME, COOKIE_VALUE, domain=urlparse(BASE_URL).hostname, path="/")
