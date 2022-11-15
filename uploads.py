@@ -1,8 +1,6 @@
 import json
 import os
 import re
-
-
 import unicodedata
 
 from bs4 import BeautifulSoup, SoupStrainer
@@ -22,7 +20,7 @@ session = LimiterSession(limiter=Limiter(RequestRate(200, Duration.MINUTE)))
 session.mount(BASE_URL, HTTPAdapter(max_retries=5))
 
 already_saved = set()
-for f in os.listdir(os.path.join(os.getcwd(), "media")):
+for f in os.listdir(os.path.join(os.getcwd(), "media_2")):
     already_saved.add(f)
 
 
@@ -56,7 +54,7 @@ def download(params):
         return
 
     resp = session.get(url, stream=True)
-    with open(f"media/{filename}", "wb+") as f:
+    with open(f"media_2/{filename}", "wb+") as f:
         for data in resp:
             f.write(data)
 
@@ -89,6 +87,7 @@ def main3():
                         for link in post["link_counts"]
                     ]
                 ):
+                    post_id = post["id"]
                     soup = BeautifulSoup(
                         post["cooked"],
                         parse_only=SoupStrainer("a"),
@@ -101,7 +100,13 @@ def main3():
                             url = tag["href"]
                             hashed_name = url[56:]  # trim through default/original/3X/
                             hashed_name = str(hashed_name).replace("/", "_")
-                            local_filename = str(topic_id) + "__--__" + hashed_name
+                            local_filename = (
+                                str(topic_id)
+                                + "__--__"
+                                + str(post_id)
+                                + "__--__"
+                                + hashed_name
+                            )
                             url_to_filename[url] = local_filename
                     else:
                         for tag in soup.findAll("a", href=regex):
@@ -113,6 +118,8 @@ def main3():
                             hashed_name = ".".join(hashed_name.split(".")[:-1])
                             local_filename = (
                                 str(topic_id)
+                                + "__--__"
+                                + str(post_id)
                                 + "__--__"
                                 + hashed_name
                                 + "__--__"
