@@ -61,14 +61,14 @@ def download(params):
     already_saved.add(filename)
 
 
-def main2():
+def download_media():
     with open("to_save.json", "r") as f:
         to_save = json.load(f)
 
     thread_map(download, list(to_save.items()))
 
 
-def main3():
+def prep_download():
     regex = re.compile("^https://www.chiefdelphi.com/uploads/default/original/")
     url_to_filename = {}
     for f in (pbar := tqdm(os.listdir(PATH))):
@@ -132,4 +132,4 @@ def main3():
 
 
 if __name__ == "__main__":
-    main2()
+    prep_download()
